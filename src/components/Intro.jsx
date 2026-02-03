@@ -4,7 +4,6 @@ import { Sparkles, ArrowRight } from 'lucide-react';
 const Intro = ({ onStart }) => {
   return (
     <motion.div
-      // 画面切り替え時のフェードイン・アウト
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
