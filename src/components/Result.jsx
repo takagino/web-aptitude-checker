@@ -1,45 +1,69 @@
-import { motion } from 'motion/react';
-import { RefreshCcw, ClipboardList } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { RefreshCcw, ClipboardList, X, Users, Wrench } from 'lucide-react';
+import { jobData } from '../data/jobData';
 
 const Result = ({ result, onReset }) => {
+  const [showFlow, setShowFlow] = useState(false);
+
+  // 10職種から詳細を引く（案Bのパターン）
+  const jobDetails = jobData.find((j) => j.id === Number(result.id));
+  if (!jobDetails) return null;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="h-full overflow-y-auto p-6 flex flex-col items-center"
-    >
-      <div className="text-center mb-6">
-        <div className="w-32 h-32 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-          {/* ここに result.imagePath の画像が入ります */}
-          <span className="text-4xl">🐱</span>
+    <div className="h-full bg-white relative overflow-y-auto pb-24">
+      <div className="p-6">
+        {/* キャラクター表示部分（省略） */}
+        <div className="text-center mb-8">
+          <img
+            src={`/images/${jobDetails.imagePath}`}
+            className="w-40 h-40 mx-auto"
+          />
+          <h1 className="text-2xl font-black mt-4">{jobDetails.title}</h1>
         </div>
-        <h2 className="text-blue-600 font-bold text-sm">{result.catchcopy}</h2>
-        <h1 className="text-3xl font-black text-slate-800">{result.title}</h1>
+
+        {/* 才能ステータス（グラフ） */}
+        <div className="bg-slate-50 p-6 rounded-[2rem] mb-8 space-y-4">
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-4">
+            Talent Stats
+          </h3>
+          {[
+            { label: '企画・設計', key: 'planning' },
+            { label: '表現・感性', key: 'creative' },
+            { label: '論理・構築', key: 'technical' },
+            { label: '共感・分析', key: 'analysis' },
+            { label: '伝える・おもてなし', key: 'communication' },
+          ].map((stat) => (
+            <div key={stat.key} className="space-y-1">
+              <div className="flex justify-between text-[11px] font-bold px-1">
+                <span className="text-slate-600">{stat.label}</span>
+                <span className="text-blue-600">
+                  {result.scores?.[stat.key]}%
+                </span>
+              </div>
+              <div className="h-2 bg-white rounded-full overflow-hidden border border-slate-100">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${result.scores?.[stat.key]}%` }}
+                  transition={{ duration: 1, ease: 'easeOut' }}
+                  className="h-full bg-blue-500 rounded-full"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* AI診断メッセージ */}
+        <div className="bg-blue-600 text-white p-6 rounded-[2rem] mb-8 shadow-xl shadow-blue-100">
+          <p className="text-sm leading-relaxed">{result.aiReason}</p>
+        </div>
+
+        {/* 仕事内容・相棒などのセクション（省略） */}
       </div>
 
-      <div className="bg-slate-50 p-4 rounded-2xl mb-6 w-full text-sm leading-relaxed border border-slate-100">
-        <p className="font-bold text-blue-700 mb-1">AIの診断理由：</p>
-        {result.aiReason}
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 w-full mb-8">
-        <button
-          onClick={() => alert('制作の流れポップアップを表示（予定）')}
-          className="flex items-center justify-center gap-2 py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-100"
-        >
-          <ClipboardList size={20} />
-          制作の流れを見る
-        </button>
-
-        <button
-          onClick={onReset}
-          className="flex items-center justify-center gap-2 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition-colors"
-        >
-          <RefreshCcw size={18} />
-          もう一度診断する
-        </button>
-      </div>
-    </motion.div>
+      {/* 固定フッター（省略） */}
+      {/* FlowModal（省略） */}
+    </div>
   );
 };
 

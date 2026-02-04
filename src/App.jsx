@@ -3,15 +3,25 @@ import { AnimatePresence } from 'motion/react';
 import Intro from './components/Intro';
 import Chat from './components/Chat';
 import Result from './components/Result';
+import { jobData } from './data/jobData';
 
 function App() {
   const [step, setStep] = useState('intro'); // 現在の画面
   const [diagnosisResult, setDiagnosisResult] = useState(null); // 最終結果
 
   const handleStart = () => setStep('chat');
-  const handleFinish = (result) => {
-    setDiagnosisResult(result);
-    setStep('result');
+  const handleFinish = (aiData) => {
+    // IDを元に静的なデータを取得
+    const jobDetails = jobData.find((j) => j.id === Number(aiData.job_id));
+
+    if (jobDetails) {
+      setDiagnosisResult({
+        ...jobDetails,
+        aiReason: aiData.aiReason,
+        scores: aiData.scores, // ここでスコアを保存
+      });
+      setStep('result');
+    }
   };
 
   return (

@@ -3,7 +3,7 @@ export const jobData = [
     id: 1,
     title: 'Webデザイナー',
     catchcopy: '心地よさを追求する、ときめきのネコ',
-    imagePath: '/neko.png',
+    imagePath: 'neko.png',
     description:
       'Webサイトの「空気感」と「おもてなしの心」を形にする仕事です。単にかっこいい絵を描くのではなく、サイトを訪れた人が「どこを見ればいいか」を迷わずに、心地よくゴールまでたどり着けるように導く「ビジュアルの案内役」を務めます。',
     responsibilities: [
@@ -48,7 +48,7 @@ export const jobData = [
     id: 2,
     title: 'フロントエンドエンジニア',
     catchcopy: '理想をカタチに動かす、職人ビーバー',
-    imagePath: '/beaver.png',
+    imagePath: 'beaver.png',
     description:
       'デザイナーが作った「図面」を、実際にブラウザで動く「本物のWebサイト」として組み立てる仕事です。最新の技術を駆使して、どんなデバイスでも快適に動くデジタル空間を構築する、Web制作における腕利きの建築士です。',
     responsibilities: [
@@ -94,7 +94,7 @@ export const jobData = [
     id: 3,
     title: 'バックエンドエンジニア',
     catchcopy: '巨大な仕組みを支える、どっしりゾウ',
-    imagePath: '/zou.png',
+    imagePath: 'zou.png',
     description:
       'Webサイトの「裏側」で、膨大なデータを交通整理し、正しく届けるための強固な仕組みを作る仕事です。何十万もの人が同時にアクセスしても止まらない安定性を築く、デジタル社会の「インフラ守護神」です。',
     responsibilities: [
@@ -139,7 +139,7 @@ export const jobData = [
     id: 4,
     title: 'Webディレクター',
     catchcopy: 'チームをゴールへ導く、統率のライオン',
-    imagePath: '/lion.png',
+    imagePath: 'lion.png',
     description:
       'クライアントの「想い」とクリエイターの「技術」を繋ぎ合わせ、一つのゴールへと導く司令塔です。制作の全工程を把握し、スケジュール、予算、品質のすべてに責任を持つプロジェクトの指揮者です。',
     responsibilities: [
@@ -184,7 +184,7 @@ export const jobData = [
     id: 5,
     title: 'Webマーケター',
     catchcopy: '流行の先を読み解く、知略のキツネ',
-    imagePath: '/kitsune.png',
+    imagePath: 'kitsune.png',
     description:
       'プロジェクトが成果を出し続けるための戦略を支える「仕掛け人」です。リサーチで進むべき方向を指し示し、公開後はデータからユーザーの本音を読み解いて、サイトをより良く育てていきます。',
     responsibilities: [
@@ -228,7 +228,7 @@ export const jobData = [
     id: 6,
     title: 'UXデザイナー',
     catchcopy: '相手の心に寄り添う、聞き耳ウサギ',
-    imagePath: '/usagi.png',
+    imagePath: 'usagi.png',
     description:
       '使う人の「体験（UX）」を設計する仕事です。単に画面を作るのではなく、サイトを訪れる前の期待感から使い終わった後の満足感まで、ユーザーの心の動きをデザインする「おもてなし担当」です。',
     responsibilities: [
@@ -273,7 +273,7 @@ export const jobData = [
     id: 7,
     title: 'Webライター',
     catchcopy: '想いを言葉で届ける、伝承のリス',
-    imagePath: '/risu.png',
+    imagePath: 'risu.png',
     description:
       '必要な情報を分かりやすく伝え、心を動かす文章を作る「ストーリーテラー」です。キャッチコピーから専門記事まで、言葉ひとつでサイトのファンを増やす役割を担います。',
     responsibilities: [
@@ -318,7 +318,7 @@ export const jobData = [
     id: 8,
     title: '動画クリエイター',
     catchcopy: '一瞬を映像で彩る、変幻のカメレオン',
-    imagePath: '/chameleon.png',
+    imagePath: 'chameleon.png',
     description:
       '映像、音、動きを組み合わせてインパクトを与える「エンターテイナー」です。リズムを操り、見る人の感情を意図通りに動かす広告映像やプロモーション動画を制作します。',
     responsibilities: [
@@ -363,7 +363,7 @@ export const jobData = [
     id: 9,
     title: 'イラストレーター',
     catchcopy: '世界を鮮やかに描く、色彩のクジャク',
-    imagePath: '/kujaku.png',
+    imagePath: 'kujaku.png',
     description:
       'Webサイトに「独自の体温」と「唯一無二の個性」をプラスする仕事です。文章や写真では伝わりにくい仕組みを図解したり、サイトの「顔」となるメインビジュアルを描き上げたりします。',
     responsibilities: [
@@ -408,7 +408,7 @@ export const jobData = [
     id: 10,
     title: 'SNS運用担当者',
     catchcopy: 'みんなの声を繋ぐ、お喋りインコ',
-    imagePath: '/inko.png',
+    imagePath: 'inko.png',
     description:
       'SNSを通じて企業の「中の人」としてユーザーと交流する「コミュニティリーダー」です。トレンドをキャッチし、ブランドを身近で親しみやすい存在へと育てていきます。',
     responsibilities: [
