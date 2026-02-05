@@ -1,50 +1,64 @@
 import { motion } from 'motion/react';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap } from 'lucide-react';
 
 const Intro = ({ onStart }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-between h-full p-8 text-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="flex flex-col items-center justify-between h-full p-10 text-center bg-[#F8F9FA]"
     >
-      <div className="flex-1 flex flex-col items-center">
-        {/* メインビジュアル */}
-        <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative mb-8"
-        >
-          <img src="/images/main-visual.png" alt="Web才能発見" />
-        </motion.div>
+      <motion.div
+        animate={{ y: [-10, -15, -10] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <h1>
+          <img
+            src="/images/main-visual.png"
+            alt="AIが判定！Web才能発見 適職診断"
+            className="scale-[1.7]"
+          />
+        </h1>
+      </motion.div>
 
-        {/* 説明文 */}
-        <div className="space-y-3 text-[15px] text-slate-600 leading-relaxed wrap-anywhere break-keep">
-          <p>
-            いくつかの質問に答えるだけで、
-            <wbr />
-            君の性格や得意なことにぴったりの職種を診断します。
-          </p>
-          <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 text-blue-700 font-medium">
-            💡 操作はカンタン！チャット形式で答えるだけ。
-          </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-center gap-2 text-lg font-black tracking-tighter italic text-slate-800">
+          <Zap size={20} fill="#FFDE00" strokeWidth={3} />
+          <p>10個の質問で</p>
+          <Zap size={20} fill="#FFDE00" strokeWidth={3} />
         </div>
+
+        <h2 className="text-2xl font-black tracking-tighter leading-tight text-black">
+          <span className="text-[#FF5C00] text-3xl italic underline decoration-8 decoration-[#00FF94]/30 underline-offset-[-4px]">
+            「Webの才能」
+          </span>{' '}
+          を暴き出す！
+        </h2>
+
+        <p className="text-[14px] font-bold text-slate-400 italic">
+          # 所要時間：約3分
+        </p>
       </div>
 
-      {/* スタートボタン */}
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{
+          y: 4,
+          boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)',
+        }}
+        transition={{
+          type: 'tween',
+          ease: 'easeOut',
+          duration: 0,
+        }}
         onClick={onStart}
-        className="w-full py-5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-2xl font-bold text-xl shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
+        className="w-full py-6 bg-[#FF5C00] text-white border-4 border-black font-black text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-3 transition-all"
       >
-        診断をスタートする
-        <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+        診断スタート！
+        <ArrowRight size={32} strokeWidth={3} />
       </motion.button>
-
-      <p className="mt-4 text-[11px] text-slate-400">
-        ※この診断にはGemini AIを使用しています
+      <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+        Powered by Gemini AI
       </p>
     </motion.div>
   );

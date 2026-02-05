@@ -1,56 +1,13 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Loader2, Sparkles } from 'lucide-react';
+import { Send, Loader2, Sparkles, Zap, Search } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
+import { SYSTEM_INSTRUCTION } from '../data/prompts';
 import { jobData } from '../data/jobData';
 
-// --- 定数・ロジックの分離 ---
 const MODEL = 'gemini-2.5-flash-lite';
 const TOTAL_QUESTIONS = 10;
-const JOB_LIST_TEXT = jobData.map((j) => `${j.id}:${j.title}`).join(', ');
 
-// プロンプト
-const SYSTEM_INSTRUCTION = `
-あなたは専門学校のカウンセラー兼、適性診断エンジンです。
-10問の対話から5つのステータス（各0-100）を測定し、最適なWeb職種を1つ判定します。
-判定対象：${JOB_LIST_TEXT}
-
-【5つの測定ステータス】
-1. Planning（企画・設計）
-2. Creative（表現・感性）
-3. Technical（論理・構築）
-4. Analysis（共感・分析）
-5. Communication（伝える・おもてなし）
-
-【職種判定の優先順位マッピング】
-・Webデザイナー：Creative > Analysis
-・フロントエンドエンジニア：Technical > Creative
-・バックエンドエンジニア：Technical > Planning
-・Webディレクター：Planning > Communication
-・Webマーケター：Analysis > Planning
-・UXデザイナー：Analysis > Creative
-・Webライター：Communication > Analysis
-・動画クリエイター：Creative > Technical
-・イラストレーター：Creative > Communication
-・SNS運用担当：Communication > Creative
-
-【対話の厳守ルール】
-1. 質問は1つずつ。全10問完走するまで絶対に診断結果（JSON）を出さない。
-2. 進行：Planning(Q1,2) → Creative(Q3,4) → Technical(Q5,6) → Analysis(Q7,8) → Communication(Q9,10)
-3. 構成：[前の回答への短めの共感や感想] + [【質問X/10】] + [質問]
-4. 形式：自由記述式のみ（選択式・はい/いいえは一切禁止）。
-5. 質問内容：Web、デザイン、IT等の専門用語や直接的な質問は一切禁止。
-6. メタ発言禁止：「〇〇力を測る」等の意図説明は絶対に行わない。
-7. 追加会話禁止：回答に深掘りせず、即座に次の質問番号へ移ること。
-8. 外見：Markdown（**）禁止。150文字以内のフレンドリーな口調で、こまめに改行すること。
-9. バリエーション：高校生が共感できる日常の何気ないシーンを質問毎に変えて提示すること。
-
-【診断完了時の挙動】
-Q10の回答後、以下のJSONのみを出力（挨拶・解説文の付随は厳禁）。
-{"job_id": ID, "aiReason": "エピソードを引用した150文字程度の熱い解説", "scores": {"planning": 点数, "creative": 点数, "technical": 点数, "analysis": 点数, "communication": 点数}}
-`;
-
-// JSON抽出ユーティリティ
 const extractJson = (text) => {
   if (!text) return null;
   const start = text.indexOf('{');
@@ -68,10 +25,12 @@ const Chat = ({ onFinish }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [rouletteIndex, setRouletteIndex] = useState(0);
   const [error, setError] = useState(null);
   const chatEndRef = useRef(null);
+  const inputRef = useRef(null);
 
-  // SDKの初期化
   const client = useMemo(
     () =>
       new GoogleGenAI({
@@ -84,7 +43,22 @@ const Chat = ({ onFinish }) => {
     return messages.filter((m) => m.role === 'model').length;
   }, [messages]);
 
-  // 初回起動
+  useEffect(() => {
+    let interval;
+    if (isCalculating) {
+      interval = setInterval(() => {
+        setRouletteIndex((prev) => (prev + 1) % jobData.length);
+      }, 80);
+    }
+    return () => clearInterval(interval);
+  }, [isCalculating]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
+
   useEffect(() => {
     const startDiagnosis = async () => {
       setIsLoading(true);
@@ -123,6 +97,7 @@ const Chat = ({ onFinish }) => {
       newMessages = [...messages, { role: 'user', text: targetInput }];
       setMessages(newMessages);
       setInput('');
+      setTimeout(() => inputRef.current?.focus(), 0);
     }
 
     setIsLoading(true);
@@ -145,7 +120,11 @@ const Chat = ({ onFinish }) => {
 
       if (jsonStr) {
         const parsedData = JSON.parse(jsonStr);
-        onFinish(parsedData);
+        setIsCalculating(true);
+
+        setTimeout(() => {
+          onFinish(parsedData);
+        }, 2000);
         return;
       }
 
@@ -164,51 +143,94 @@ const Chat = ({ onFinish }) => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const isButtonDisabled = isLoading || isCalculating || !input.trim();
+
   return (
-    <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
-      {/* ヘッダー：プログレスバー */}
-      <header className="bg-white border-b p-4 sticky top-0 z-10 shadow-sm">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2">
-            <div className="bg-blue-100 p-1.5 rounded-lg">
-              <Sparkles size={16} className="text-blue-600" />
+    <div className="flex flex-col h-full bg-[#E8EDF2] relative">
+      <AnimatePresence>
+        {isCalculating && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 bg-[#FFDE00] flex flex-col items-center justify-center p-10 text-center"
+          >
+            <div className="w-full max-w-xs bg-white border-8 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-8 flex flex-col items-center">
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 0.5 }}
+                className="mb-4 bg-black text-white px-4 py-1 font-black italic text-xl uppercase"
+              >
+                Analyzing...
+              </motion.div>
+
+              <div className="h-40 flex items-center justify-center overflow-hidden mb-6">
+                <img
+                  src={`/images/${jobData[rouletteIndex].imagePath}`}
+                  alt="scanning"
+                  className="w-32 h-32 object-contain"
+                />
+              </div>
+
+              <div className="text-2xl font-black italic tracking-tighter uppercase mb-4 border-b-4 border-black pb-2 w-full">
+                {jobData[rouletteIndex].title}
+              </div>
+              <p className="font-bold text-sm">君の才能をスキャン中...</p>
             </div>
-            <span className="text-sm font-black text-slate-700 uppercase tracking-tighter">
-              AIが診断中...
+
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+              className="mt-10"
+            >
+              <Zap size={48} fill="black" />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <header className="bg-white border-b-4 border-black p-4 sticky top-0 z-10">
+        <div className="flex justify-between items-center mb-2 px-1">
+          <div className="flex items-center gap-2">
+            <Zap size={18} fill="black" strokeWidth={3} />
+            <span className="text-sm font-black italic uppercase tracking-widest">
+              ANALYZING...
             </span>
           </div>
-          <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100">
+          <span className="text-sm font-black italic">
             {currentQuestionNumber} / {TOTAL_QUESTIONS}
           </span>
         </div>
-        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+
+        <div className="w-full h-4 bg-white border-4 border-black relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,black_10px,black_20px)]" />
+
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-400 to-blue-600"
+            className="h-full bg-[#00FF94] border-r-4 border-black relative z-10"
             animate={{
               width: `${(currentQuestionNumber / TOTAL_QUESTIONS) * 100}%`,
             }}
-            transition={{ duration: 0.5 }}
+            transition={{ type: 'tween', ease: 'easeOut', duration: 0.3 }}
           />
         </div>
       </header>
 
-      {/* チャットエリア */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
         <AnimatePresence mode="popLayout">
           {messages
             .filter((m) => !m.hidden)
             .map((msg, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ x: msg.role === 'user' ? 20 : -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`p-4 rounded-3xl max-w-[85%] text-[15px] leading-relaxed shadow-sm whitespace-pre-wrap ${
+                  className={`p-4 border-4 border-black font-bold text-[15px] leading-relaxed whitespace-pre-wrap ${
                     msg.role === 'user'
-                      ? 'bg-blue-600 text-white rounded-tr-none shadow-blue-100'
-                      : 'bg-white text-slate-700 rounded-tl-none border border-slate-200'
+                      ? 'bg-[#00E0FF] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none'
+                      : 'bg-white shadow-[-4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none'
                   }`}
                 >
                   {msg.text}
@@ -216,42 +238,12 @@ const Chat = ({ onFinish }) => {
               </motion.div>
             ))}
         </AnimatePresence>
-
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-start px-2"
-          >
-            <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
-              <Loader2 className="animate-spin text-blue-400" size={20} />
-            </div>
-          </motion.div>
-        )}
-
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-red-50 border border-red-100 rounded-2xl mx-2 flex flex-col items-center gap-3"
-          >
-            <p className="text-xs text-red-600 font-bold text-center">
-              {error}
-            </p>
-            <button
-              onClick={() => handleSend(messages[messages.length - 1]?.text)}
-              className="text-xs bg-white text-red-500 px-6 py-2 rounded-full font-black border border-red-200 shadow-sm active:scale-95 transition-all"
-            >
-              もう一度送ってみる
-            </button>
-          </motion.div>
-        )}
         <div ref={chatEndRef} />
       </div>
 
-      {/* フッター：入力エリア */}
-      <footer className="p-4 pb-8 bg-white border-t flex gap-2 items-center">
+      <footer className="p-4 pb-8 bg-white border-t-4 border-black flex gap-2">
         <input
+          ref={inputRef}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -261,17 +253,30 @@ const Chat = ({ onFinish }) => {
               handleSend();
             }
           }}
-          className="flex-1 bg-slate-100 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-blue-400 text-[15px] transition-all"
-          placeholder={isLoading ? 'AIが考え中...' : '答えを入力してね...'}
-          disabled={isLoading}
+          className="flex-1 border-4 border-black bg-[#F1F3F5] px-4 py-4 font-black outline-none focus:bg-[#00FF94]/10 transition-all placeholder:text-slate-400"
+          placeholder={isLoading ? 'SCANNING...' : 'INPUT ANSWER!'}
+          disabled={isLoading || isCalculating}
         />
-        <button
+        <motion.button
+          whileHover={
+            !isButtonDisabled
+              ? {
+                  y: 2,
+                  boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)',
+                }
+              : {}
+          }
+          transition={{
+            type: 'tween',
+            ease: 'easeOut',
+            duration: 0,
+          }}
           onClick={() => handleSend()}
-          disabled={isLoading || !input.trim()}
-          className="bg-blue-600 text-white w-14 h-14 rounded-2xl shadow-lg shadow-blue-100 flex items-center justify-center active:scale-90 transition-all disabled:bg-slate-200 disabled:shadow-none"
+          disabled={isButtonDisabled}
+          className="bg-[#FFDE00] border-4 border-black px-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-colors disabled:bg-slate-200"
         >
-          <Send size={22} />
-        </button>
+          <Send size={24} strokeWidth={3} />
+        </motion.button>
       </footer>
     </div>
   );
