@@ -241,21 +241,30 @@ const Result = ({ result, onReset }) => {
       <footer className="p-4 pb-10 bg-white border-t-4 border-black flex gap-3 z-30 shadow-[0_-8px_20px_rgba(0,0,0,0.05)]">
         <motion.button
           whileHover={{
-            x: -4,
-            y: -4,
-            boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)',
-            backgroundColor: '#00FF94',
+            y: 4,
+            boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)',
           }}
-          whileTap={{ x: 4, y: 4, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
-          transition={{ type: 'tween', duration: 0.1 }}
+          transition={{
+            type: 'tween',
+            ease: 'easeOut',
+            duration: 0,
+          }}
           onClick={() => setShowFlow(true)}
           className="flex-1 bg-[#00FF94] border-4 border-black py-4 font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase italic flex items-center justify-center gap-2"
         >
           <ClipboardList size={22} strokeWidth={3} /> Workflow
         </motion.button>
         <motion.button
-          whileHover={{ rotate: 90, backgroundColor: '#FFDE00' }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{
+            rotate: 90,
+            backgroundColor: '#FFDE00',
+            boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)',
+          }}
+          transition={{
+            type: 'tween',
+            ease: 'easeOut',
+            duration: 0,
+          }}
           onClick={onReset}
           className="w-16 h-16 bg-white border-4 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
         >
