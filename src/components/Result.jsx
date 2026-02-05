@@ -42,7 +42,7 @@ const Result = ({ result, onReset }) => {
 
   return (
     <div className="flex flex-col h-full bg-[#E8EDF2] relative overflow-hidden font-bold">
-      {/* ヘッダー：スッキリとスキャン完了を提示 */}
+      {/* ヘッダー：デザイン優先の英語 */}
       <header className="bg-white border-b-4 border-black p-4 flex justify-between items-center z-20">
         <div className="flex items-center gap-2">
           <Star size={18} fill="black" />
@@ -77,10 +77,10 @@ const Result = ({ result, onReset }) => {
             {jobDetails.catchcopy}
           </div>
 
-          {/* パワーメーター */}
+          {/* 才能分析グラフ */}
           <div className={NEO_CARD}>
-            <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2 text-xs uppercase">
-              <Zap size={16} fill="black" /> Talent Analysis
+            <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2 text-xs font-black uppercase tracking-widest">
+              <Zap size={16} fill="black" /> 才能分析レポート
             </div>
             <div className="space-y-4 text-left">
               {stats.map((s) => (
@@ -102,12 +102,12 @@ const Result = ({ result, onReset }) => {
             </div>
           </div>
 
-          {/* AIメッセージ */}
+          {/* AIアドバイス */}
           <div
             className={`${NEO_CARD} !bg-black text-white !text-left relative overflow-hidden`}
           >
             <h4 className="text-[#FFDE00] italic text-xs mb-2 uppercase tracking-widest">
-              Counselor's Voice
+              AIアドバイス
             </h4>
             <p className="text-sm leading-relaxed italic relative z-10">
               {result.aiReason}
@@ -125,22 +125,21 @@ const Result = ({ result, onReset }) => {
         {/* --- GROUP 2: 業種の説明 --- */}
         <section className="space-y-8">
           <div className={`${NEO_LABEL} bg-[#00E0FF] -rotate-2 ml-2 text-sm`}>
-            About This Job
+            この職業について
           </div>
 
-          {/* 仕事の概要 */}
           <div className={NEO_CARD}>
             <p className="text-[15px] leading-relaxed text-left text-slate-800">
               {jobDetails.description}
             </p>
           </div>
 
-          {/* Missions：タイトルと説明を両方表示 */}
+          {/* 主なミッション */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 px-1 text-black">
               <BookOpen size={20} strokeWidth={3} className="text-[#FF00E5]" />
               <h3 className="text-lg font-black italic uppercase tracking-tighter">
-                Main Missions
+                主なミッション
               </h3>
             </div>
             <div className="grid gap-3">
@@ -165,10 +164,10 @@ const Result = ({ result, onReset }) => {
             </div>
           </div>
 
-          {/* 最強の相棒 (Compatibility) */}
+          {/* 最高の相棒 */}
           <div className={NEO_CARD}>
             <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2 text-[10px] uppercase font-black opacity-50">
-              <Users size={16} strokeWidth={3} /> Best Buddies
+              <Users size={16} strokeWidth={3} /> 最高の相棒
             </div>
             <div className="space-y-4 text-left">
               {jobDetails.compatibility.map((c, i) => (
@@ -187,15 +186,13 @@ const Result = ({ result, onReset }) => {
 
         <hr className="border-t-4 border-dashed border-black/10 mx-4" />
 
-        {/* --- GROUP 3: この業種になるには？ --- */}
+        {/* --- GROUP 3: 今日からできること --- */}
         <section className="space-y-6 pb-6">
-          {/* 見出しラベル */}
           <div className={`${NEO_LABEL} bg-[#FFDE00] rotate-1 ml-2 text-sm`}>
-            Daily Training
+            日常トレーニング
           </div>
 
           <div className={`${NEO_CARD} !bg-white text-left`}>
-            {/* セクションタイトル */}
             <div className="flex items-center gap-2 mb-6 relative z-10">
               <Zap
                 className="text-[#7000FF]"
@@ -204,11 +201,10 @@ const Result = ({ result, onReset }) => {
                 fill="#7000FF"
               />
               <h3 className="text-lg font-black tracking-tighter italic uppercase text-black">
-                Try This Today!
+                今日からチャレンジ！
               </h3>
             </div>
 
-            {/* トレーニングリスト (ul) */}
             <ul className="space-y-4">
               {jobDetails.howToBecome &&
                 jobDetails.howToBecome.map((step, i) => (
@@ -216,12 +212,9 @@ const Result = ({ result, onReset }) => {
                     key={i}
                     className="flex gap-4 items-start bg-slate-50 p-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   >
-                    {/* ナンバリングバッジ */}
                     <div className="bg-[#7000FF] text-white text-[10px] font-black italic px-2 py-1 shrink-0 mt-0.5">
                       STEP {i + 1}
                     </div>
-
-                    {/* アクション内容 */}
                     <p className="text-[13px] font-bold leading-relaxed text-slate-800">
                       {step}
                     </p>
@@ -229,7 +222,6 @@ const Result = ({ result, onReset }) => {
                 ))}
             </ul>
 
-            {/* 補足メッセージ */}
             <p className="mt-8 text-[11px] font-black italic text-slate-400 text-center uppercase tracking-widest">
               — Just one step a day —
             </p>
@@ -252,7 +244,7 @@ const Result = ({ result, onReset }) => {
           onClick={() => setShowFlow(true)}
           className="flex-1 bg-[#00FF94] border-4 border-black py-4 font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase italic flex items-center justify-center gap-2"
         >
-          <ClipboardList size={22} strokeWidth={3} /> Workflow
+          <ClipboardList size={22} strokeWidth={3} /> 制作の流れ
         </motion.button>
         <motion.button
           whileHover={{
@@ -280,7 +272,6 @@ const Result = ({ result, onReset }) => {
   );
 };
 
-// WorkflowModal（変更なし）
 const WorkflowModal = ({ onClose }) => {
   const steps = [
     {
@@ -314,7 +305,7 @@ const WorkflowModal = ({ onClose }) => {
       >
         <div className="sticky top-0 bg-black text-white p-4 flex justify-between items-center z-10">
           <span className="font-black italic uppercase tracking-widest text-sm">
-            Job Workflow
+            制作の流れ
           </span>
           <button
             onClick={onClose}
@@ -346,7 +337,7 @@ const WorkflowModal = ({ onClose }) => {
             onClick={onClose}
             className="w-full py-4 bg-black text-white font-black uppercase italic mt-4 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]"
           >
-            Close
+            閉じる
           </button>
         </div>
       </motion.div>
