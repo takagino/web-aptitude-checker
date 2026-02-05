@@ -10,6 +10,7 @@ import {
   Users,
   BookOpen,
   GraduationCap,
+  X,
   ArrowRightCircle,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -21,44 +22,12 @@ const Result = ({ result, onReset }) => {
   const jobDetails = jobData.find((j) => j.id === Number(result.id));
 
   useEffect(() => {
-    const duration = 200;
-    const end = Date.now() + duration;
-
-    const frame = () => {
-      confetti({
-        particleCount: 6,
-        angle: 60,
-        spread: 100,
-        origin: { x: 0 },
-        colors: [
-          '#00FF94',
-          '#FF5C00',
-          '#7000FF',
-          '#FFDE00',
-          '#00E0FF',
-          '#FF00E5',
-        ],
-      });
-      confetti({
-        particleCount: 6,
-        angle: 120,
-        spread: 100,
-        origin: { x: 1 },
-        colors: [
-          '#00FF94',
-          '#FF5C00',
-          '#7000FF',
-          '#FFDE00',
-          '#00E0FF',
-          '#FF00E5',
-        ],
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
-    };
-    frame();
+    confetti({
+      particleCount: 150,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: ['#FFDE00', '#00E0FF', '#FF00E5', '#00FF94'],
+    });
   }, []);
 
   if (!jobDetails) return null;
@@ -73,6 +42,7 @@ const Result = ({ result, onReset }) => {
 
   return (
     <div className="flex flex-col h-full bg-[#E8EDF2] relative overflow-hidden font-bold">
+      {/* ヘッダー：スッキリとスキャン完了を提示 */}
       <header className="bg-white border-b-4 border-black p-4 flex justify-between items-center z-20">
         <div className="flex items-center gap-2">
           <Star size={18} fill="black" />
@@ -85,52 +55,46 @@ const Result = ({ result, onReset }) => {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-12 custom-scrollbar pb-20">
+      <div className="flex-1 overflow-y-auto p-4 space-y-12 custom-scrollbar pb-24">
         {/* --- GROUP 1: 診断結果 --- */}
-        <section className="space-y-6 pt-4">
-          <div className="text-center">
-            <motion.div
-              initial={{ scale: 0.8, rotate: -5 }}
-              animate={{ scale: 1, rotate: 0 }}
-              className="inline-block bg-white border-4 border-black p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-6"
-            >
-              <img
-                src={`/images/${jobDetails.imagePath}`}
-                className="w-40 h-40 object-contain mx-auto"
-                alt={jobDetails.title}
-              />
-            </motion.div>
-            <h1 className="text-4xl font-black italic uppercase tracking-tighter leading-none mb-2 text-black">
-              {jobDetails.title}
-            </h1>
-            <div className="bg-black text-[#00FF94] inline-block px-3 py-1 text-xs uppercase italic transform -rotate-1">
-              {jobDetails.catchcopy}
-            </div>
+        <section className="space-y-6 pt-4 text-center">
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            className={`${NEO_CARD} inline-block !p-4 !shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]`}
+          >
+            <img
+              src={`/images/${jobDetails.imagePath}`}
+              className="w-60 h-60 mx-auto"
+              alt={jobDetails.title}
+            />
+          </motion.div>
+
+          <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none text-black">
+            {jobDetails.title}
+          </h1>
+          <div className="bg-black text-[#00FF94] inline-block px-3 py-1 text-xs uppercase italic transform -rotate-1 italic">
+            {jobDetails.catchcopy}
           </div>
 
           {/* パワーメーター */}
-          <div className={`${NEO_CARD}`}>
-            <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2">
-              <Zap size={18} fill="black" />
-              <span className="text-xs font-black uppercase tracking-widest">
-                Talent Analysis
-              </span>
+          <div className={NEO_CARD}>
+            <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2 text-xs uppercase">
+              <Zap size={16} fill="black" /> Talent Analysis
             </div>
-            <div className="space-y-4">
-              {stats.map((stat) => (
-                <div key={stat.key} className="space-y-1">
-                  <div className="flex justify-between text-[12px] uppercase font-black italic text-slate-500 px-1">
-                    <span>{stat.label}</span>
-                    <span className="text-black">
-                      {result.scores?.[stat.key]}%
-                    </span>
+            <div className="space-y-4 text-left">
+              {stats.map((s) => (
+                <div key={s.key} className="space-y-1">
+                  <div className="flex justify-between text-[10px] font-black uppercase italic opacity-50 px-1">
+                    <span>{s.label}</span>
+                    <span>{result.scores?.[s.key]}%</span>
                   </div>
-                  <div className="h-5 bg-[#F1F3F5] border-2 border-black relative overflow-hidden">
+                  <div className="h-4 bg-slate-100 border-2 border-black overflow-hidden relative">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${result.scores?.[stat.key]}%` }}
-                      transition={{ duration: 1.2, ease: 'steps(10)' }}
-                      className={`h-full ${stat.color} border-r-2 border-black`}
+                      animate={{ width: `${result.scores?.[s.key]}%` }}
+                      transition={{ duration: 1, ease: 'steps(10)' }}
+                      className={`h-full ${s.color} border-r-2 border-black`}
                     />
                   </div>
                 </div>
@@ -139,61 +103,61 @@ const Result = ({ result, onReset }) => {
           </div>
 
           {/* AIメッセージ */}
-          <div className={`${NEO_CARD} !bg-black text-white`}>
-            <div className="absolute top-4 right-4 text-[#FFDE00] opacity-50">
-              <Heart fill="#FFDE00" size={24} />
-            </div>
-            <h4 className="text-[#FFDE00] font-black italic mb-3 text-sm uppercase tracking-widest">
-              AI's Voice
+          <div
+            className={`${NEO_CARD} !bg-black text-white !text-left relative overflow-hidden`}
+          >
+            <h4 className="text-[#FFDE00] italic text-xs mb-2 uppercase tracking-widest">
+              Counselor's Voice
             </h4>
-            <p className="text-[14px] leading-relaxed relative z-10 italic font-medium">
+            <p className="text-sm leading-relaxed italic relative z-10">
               {result.aiReason}
             </p>
+            <Heart
+              className="absolute -bottom-2 -right-2 opacity-20"
+              size={60}
+              fill="white"
+            />
           </div>
         </section>
 
-        <hr className="border-t-4 border-dashed border-black/20 mx-4" />
+        <hr className="border-t-4 border-dashed border-black/10 mx-4" />
 
         {/* --- GROUP 2: 業種の説明 --- */}
         <section className="space-y-8">
-          <div className={`${NEO_LABEL} bg-[#00E0FF] -rotate-2`}>
-            <h2 className="text-xl font-black italic uppercase tracking-tighter">
-              About Job
-            </h2>
+          <div className={`${NEO_LABEL} bg-[#00E0FF] -rotate-2 ml-2 text-sm`}>
+            About This Job
           </div>
 
-          {/* 概要 */}
-          <div className="space-y-4">
-            <div className={`${NEO_CARD}`}>
-              <p className="text-[15px] leading-relaxed text-slate-900">
-                {jobDetails.description}
-              </p>
-            </div>
+          {/* 仕事の概要 */}
+          <div className={NEO_CARD}>
+            <p className="text-[15px] leading-relaxed text-left text-slate-800">
+              {jobDetails.description}
+            </p>
           </div>
 
-          {/* ミッション */}
+          {/* Missions：タイトルと説明を両方表示 */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 px-2">
+            <div className="flex items-center gap-2 px-1 text-black">
               <BookOpen size={20} strokeWidth={3} className="text-[#FF00E5]" />
               <h3 className="text-lg font-black italic uppercase tracking-tighter">
                 Main Missions
               </h3>
             </div>
             <div className="grid gap-3">
-              {jobDetails.responsibilities.map((item, idx) => (
+              {jobDetails.responsibilities.map((r, i) => (
                 <div
-                  key={idx}
-                  className="bg-white border-2 border-black p-4 flex gap-4 items-center"
+                  key={i}
+                  className="bg-white border-2 border-black p-4 flex gap-4 items-start text-left"
                 >
-                  <div className="w-8 h-8 bg-black text-white flex items-center justify-center text-sm italic shrink-0">
-                    {idx + 1}
+                  <div className="w-8 h-8 bg-black text-white text-xs flex items-center justify-center font-black italic shrink-0 mt-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
+                    {i + 1}
                   </div>
                   <div>
-                    <h4 className="font-black text-[14px] leading-tight mb-0.5">
-                      {item.title}
+                    <h4 className="font-black text-[15px] leading-tight mb-1">
+                      {r.title}
                     </h4>
-                    <p className="text-[11px] text-slate-500 leading-tight">
-                      {item.description}
+                    <p className="text-[12px] text-slate-500 leading-relaxed font-medium">
+                      {r.description}
                     </p>
                   </div>
                 </div>
@@ -201,22 +165,19 @@ const Result = ({ result, onReset }) => {
             </div>
           </div>
 
-          {/* 相棒 */}
-          <div className={`${NEO_CARD}`}>
-            <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2">
-              <Users size={18} strokeWidth={3} />
-              <h3 className="text-sm font-black italic uppercase tracking-widest text-slate-600">
-                Best Buddies
-              </h3>
+          {/* 最強の相棒 (Compatibility) */}
+          <div className={NEO_CARD}>
+            <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2 text-[10px] uppercase font-black opacity-50">
+              <Users size={16} strokeWidth={3} /> Best Buddies
             </div>
-            <div className="grid gap-4">
-              {jobDetails.compatibility.map((item, idx) => (
-                <div key={idx} className="space-y-1">
-                  <h4 className="font-black text-[14px] text-[#FF5C00] flex items-center gap-1">
-                    <ArrowRightCircle size={14} /> {item.title}
-                  </h4>
-                  <p className="text-[11px] text-slate-500 leading-relaxed italic pl-5">
-                    {item.description}
+            <div className="space-y-4 text-left">
+              {jobDetails.compatibility.map((c, i) => (
+                <div key={i} className="group">
+                  <div className="text-[13px] font-black text-[#FF5C00] flex items-center gap-1.5 mb-1">
+                    <ArrowRightCircle size={14} strokeWidth={3} /> {c.title}
+                  </div>
+                  <p className="text-[11px] text-slate-500 italic pl-5 leading-relaxed">
+                    {c.description}
                   </p>
                 </div>
               ))}
@@ -224,42 +185,60 @@ const Result = ({ result, onReset }) => {
           </div>
         </section>
 
-        <hr className="border-t-4 border-dashed border-black/20 mx-4" />
+        <hr className="border-t-4 border-dashed border-black/10 mx-4" />
 
         {/* --- GROUP 3: この業種になるには？ --- */}
         <section className="space-y-6 pb-6">
-          <div className={`${NEO_LABEL} bg-[#FFDE00] rotate-2`}>
-            <h2 className="text-xl font-black italic uppercase tracking-tighter">
-              Next Step
-            </h2>
+          {/* 見出しラベル */}
+          <div className={`${NEO_LABEL} bg-[#FFDE00] rotate-1 ml-2 text-sm`}>
+            Daily Training
           </div>
 
-          <div className={`${NEO_CARD}`}>
-            <div className="absolute -top-4 -right-4 opacity-10 rotate-12">
-              <GraduationCap size={100} fill="black" />
+          <div className={`${NEO_CARD} !bg-white text-left`}>
+            {/* セクションタイトル */}
+            <div className="flex items-center gap-2 mb-6 relative z-10">
+              <Zap
+                className="text-[#7000FF]"
+                size={28}
+                strokeWidth={3}
+                fill="#7000FF"
+              />
+              <h3 className="text-lg font-black tracking-tighter italic uppercase text-black">
+                Try This Today!
+              </h3>
             </div>
 
-            <div className="relative z-10 space-y-4">
-              <h3 className="text-lg font-black flex items-center gap-2 text-black">
-                <GraduationCap
-                  className="text-[#7000FF]"
-                  size={24}
-                  strokeWidth={3}
-                />
-                どうすればなれる？
-              </h3>
-              {/* jobData.jsに新しく追加された howToBecome を表示 */}
-              <p className="text-[15px] leading-relaxed text-slate-800 bg-[#F1F3F5] p-4 border-l-8 border-[#7000FF]">
-                {jobDetails.howToBecome ||
-                  'この職業を目指すには、専門的なスキルと情熱が必要です。トライデントで一緒に学びましょう！'}
-              </p>
-            </div>
+            {/* トレーニングリスト (ul) */}
+            <ul className="space-y-4">
+              {jobDetails.howToBecome &&
+                jobDetails.howToBecome.map((step, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-4 items-start bg-slate-50 p-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  >
+                    {/* ナンバリングバッジ */}
+                    <div className="bg-[#7000FF] text-white text-[10px] font-black italic px-2 py-1 shrink-0 mt-0.5">
+                      STEP {i + 1}
+                    </div>
+
+                    {/* アクション内容 */}
+                    <p className="text-[13px] font-bold leading-relaxed text-slate-800">
+                      {step}
+                    </p>
+                  </li>
+                ))}
+            </ul>
+
+            {/* 補足メッセージ */}
+            <p className="mt-8 text-[11px] font-black italic text-slate-400 text-center uppercase tracking-widest">
+              — Just one step a day —
+            </p>
           </div>
         </section>
       </div>
 
       {/* 固定フッター */}
-      <footer className="p-4 pb-10 bg-white border-t-4 border-black flex gap-3 z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
+      <footer className="p-4 pb-10 bg-white border-t-4 border-black flex gap-3 z-30 shadow-[0_-8px_20px_rgba(0,0,0,0.05)]">
         <motion.button
           whileHover={{
             x: -4,
@@ -267,35 +246,102 @@ const Result = ({ result, onReset }) => {
             boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)',
             backgroundColor: '#00FF94',
           }}
-          whileTap={{
-            x: 4,
-            y: 4,
-            boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)',
-            backgroundColor: '#00CC76',
-          }}
+          whileTap={{ x: 4, y: 4, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
           transition={{ type: 'tween', duration: 0.1 }}
           onClick={() => setShowFlow(true)}
-          className="flex-1 bg-[#00FF94] border-4 border-black py-4 font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2 uppercase italic transition-colors"
+          className="flex-1 bg-[#00FF94] border-4 border-black py-4 font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase italic flex items-center justify-center gap-2"
         >
-          <ClipboardList size={24} strokeWidth={3} />
-          Workflow
+          <ClipboardList size={22} strokeWidth={3} /> Workflow
         </motion.button>
-
         <motion.button
-          whileHover={{
-            rotate: 90,
-            backgroundColor: '#FFDE00',
-            boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)',
-          }}
+          whileHover={{ rotate: 90, backgroundColor: '#FFDE00' }}
           whileTap={{ scale: 0.9 }}
-          transition={{ type: 'tween', duration: 0.1 }}
           onClick={onReset}
           className="w-16 h-16 bg-white border-4 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
         >
           <RefreshCcw size={28} strokeWidth={3} />
         </motion.button>
       </footer>
+
+      {/* Workflowモーダル */}
+      <AnimatePresence>
+        {showFlow && <WorkflowModal onClose={() => setShowFlow(false)} />}
+      </AnimatePresence>
     </div>
+  );
+};
+
+// WorkflowModal（変更なし）
+const WorkflowModal = ({ onClose }) => {
+  const steps = [
+    {
+      title: '企画・ヒアリング',
+      desc: 'クライアントの悩みを聞き、解決策を考えます。',
+    },
+    {
+      title: '設計・構成',
+      desc: 'サイトの地図を作り、使いやすさを追求します。',
+    },
+    { title: 'デザイン制作', desc: '見た目や空気感を色とカタチで表現します。' },
+    {
+      title: '実装・コーディング',
+      desc: 'プログラムを書いて、ブラウザで動かします。',
+    },
+    { title: '公開・運用', desc: '世界中に公開し、さらに使いやすく育てます。' },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
+    >
+      <motion.div
+        initial={{ y: 50, scale: 0.9 }}
+        animate={{ y: 0, scale: 1 }}
+        exit={{ y: 50, scale: 0.9 }}
+        className={`${NEO_CARD} w-full max-h-[80vh] overflow-y-auto !bg-[#FFDE00] !p-0`}
+      >
+        <div className="sticky top-0 bg-black text-white p-4 flex justify-between items-center z-10">
+          <span className="font-black italic uppercase tracking-widest text-sm">
+            Job Workflow
+          </span>
+          <button
+            onClick={onClose}
+            className="hover:rotate-90 transition-transform"
+          >
+            <X size={24} strokeWidth={3} />
+          </button>
+        </div>
+        <div className="p-6 space-y-6 text-left">
+          {steps.map((s, i) => (
+            <div key={i} className="flex gap-4 relative">
+              {i !== steps.length - 1 && (
+                <div className="absolute left-[15px] top-10 bottom-[-20px] w-1 bg-black/20" />
+              )}
+              <div className="w-8 h-8 bg-black text-white flex items-center justify-center font-black italic shrink-0 z-10 shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]">
+                {i + 1}
+              </div>
+              <div className="pb-4">
+                <h4 className="font-black text-[17px] leading-tight mb-1">
+                  {s.title}
+                </h4>
+                <p className="text-[13px] font-medium opacity-80 leading-relaxed">
+                  {s.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+          <button
+            onClick={onClose}
+            className="w-full py-4 bg-black text-white font-black uppercase italic mt-4 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]"
+          >
+            Close
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

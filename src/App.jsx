@@ -6,7 +6,7 @@ import Result from './components/Result';
 import { jobData } from './data/jobData';
 
 const MOCK_RESULT = {
-  ...jobData.find((j) => j.id === 1), // 1: Webデザイナー
+  ...jobData.find((j) => j.id === 1),
   aiReason:
     '君の回答からは、細部への並々ならぬこだわりと、使う人への深い思いやりが感じられたよ！それはWebの世界では「最高のユーザー体験」を創り出す武器になる。チームを支え、画面の向こうの誰かを笑顔にするデザイナーとして活躍する姿が目に浮かぶよ！',
   scores: {
