@@ -139,7 +139,7 @@ const Result = ({ result, onReset }) => {
           </div>
 
           {/* AIメッセージ */}
-          <div className={`${NEO_CARD} bg-black text-white`}>
+          <div className={`${NEO_CARD} !bg-black text-white`}>
             <div className="absolute top-4 right-4 text-[#FFDE00] opacity-50">
               <Heart fill="#FFDE00" size={24} />
             </div>
