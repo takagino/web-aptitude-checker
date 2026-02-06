@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   RefreshCcw,
@@ -12,13 +12,20 @@ import {
   GraduationCap,
   X,
   ArrowRightCircle,
+  ChevronUp,
+  Play,
+  Pause,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { jobData } from '../data/jobData';
 import { NEO_CARD, NEO_LABEL } from '../data/theme';
 
+const SCROLL_SPEED = 15;
+
 const Result = ({ result, onReset }) => {
   const [showFlow, setShowFlow] = useState(false);
+  const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+  const scrollRef = useRef(null);
   const jobDetails = jobData.find((j) => j.id === Number(result.id));
 
   useEffect(() => {
@@ -31,6 +38,30 @@ const Result = ({ result, onReset }) => {
   }, []);
 
   if (!jobDetails) return null;
+
+  useEffect(() => {
+    let interval;
+    if (isAutoScrolling) {
+      interval = setInterval(() => {
+        if (scrollRef.current) {
+          const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+          if (scrollTop + clientHeight >= scrollHeight - 1) {
+            setIsAutoScrolling(false);
+          } else {
+            scrollRef.current.scrollTop += 1;
+          }
+        }
+      }, SCROLL_SPEED);
+    }
+    return () => clearInterval(interval);
+  }, [isAutoScrolling]);
+
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsAutoScrolling(false);
+    }
+  };
 
   const stats = [
     { label: '企画・設計', key: 'planning', color: 'bg-[#00E0FF]' },
@@ -55,7 +86,10 @@ const Result = ({ result, onReset }) => {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-12 custom-scrollbar pb-24">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto p-4 space-y-12 custom-scrollbar pb-24"
+      >
         {/* --- GROUP 1: 診断結果 --- */}
         <section className="space-y-6 pt-4 text-center">
           <motion.div
@@ -227,6 +261,42 @@ const Result = ({ result, onReset }) => {
             </p>
           </div>
         </section>
+      </div>
+
+      <div className="fixed bottom-32 right-4 flex flex-col gap-3 z-40">
+        {/* 自動スクロールボタン */}
+        <motion.button
+          whileHover={{
+            x: -2,
+            y: -2,
+            boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)',
+          }}
+          whileTap={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+          onClick={() => setIsAutoScrolling(!isAutoScrolling)}
+          className={`w-12 h-12 flex items-center justify-center border-4 border-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+            isAutoScrolling ? 'bg-[#FF00E5] text-white' : 'bg-white text-black'
+          }`}
+        >
+          {isAutoScrolling ? (
+            <Pause size={24} strokeWidth={3} />
+          ) : (
+            <Play size={24} strokeWidth={3} className="ml-1" />
+          )}
+        </motion.button>
+
+        {/* トップへ戻るボタン */}
+        <motion.button
+          whileHover={{
+            x: -2,
+            y: -2,
+            boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)',
+          }}
+          whileTap={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+          onClick={scrollToTop}
+          className="w-12 h-12 flex items-center justify-center bg-white border-4 border-black text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+        >
+          <ChevronUp size={28} strokeWidth={3} />
+        </motion.button>
       </div>
 
       {/* 固定フッター */}

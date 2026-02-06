@@ -10,14 +10,14 @@ const Intro = ({ onStart }) => {
       className="flex flex-col items-center justify-between h-full p-10 text-center bg-[#F8F9FA]"
     >
       <motion.div
-        animate={{ y: [-10, -15, -10] }}
+        animate={{ y: [-5, -10, -5] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       >
         <h1>
           <img
             src="/images/main-visual.png"
             alt="AIが判定！Web才能発見 適職診断"
-            className="scale-[1.7]"
+            className="scale-[1.5]"
           />
         </h1>
       </motion.div>
